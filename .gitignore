@@ -5,5 +5,6 @@ __pycache__
 /content
 /yolo/darknet*
 /yolo/*.weights
-yolo/plantacaocafe/custom-yolov4-tiny-detector_best.weights
-yolo/chaves_fenda/custom-yolov4-tiny-detector_best.weights
+/yolo/plantacaocafe/custom-yolov4-tiny-detector_best.weights
+/yolo/chaves_fenda/custom-yolov4-tiny-detector_best.weights
+/imagem/*
