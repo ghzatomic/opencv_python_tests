@@ -1,4 +1,4 @@
-from YoloObjectDetector import ObjectDetector
+from YoloV4ObjectDetector import ObjectDetector
 from FaceDetector import FaceDetector
 from VideoUtils import VideoUtils
 
@@ -6,7 +6,7 @@ face_detector = FaceDetector()
 object_detector = ObjectDetector()
 video_utils =VideoUtils()
 
-image_path = "imagem/captcha16.jpg"
+image_path = "imagem/TESTEcafe.jpeg"
 
 
 def face_detector_func(img):

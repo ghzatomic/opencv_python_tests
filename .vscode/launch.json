@@ -10,6 +10,13 @@
             "request": "launch",
             "program": "${workspaceFolder}/teste.py",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Image Splitter",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/ImageSplitter.py",
+            "console": "integratedTerminal"
         }
     ]
 }

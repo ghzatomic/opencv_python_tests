@@ -1,3 +1,6 @@
 /.project
 __pycache__
 /yolo/yolov3.weights
+
+/content
+/yolo/darknet*
