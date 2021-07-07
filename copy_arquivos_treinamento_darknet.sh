@@ -10,6 +10,11 @@ rm roboflow.zip
 rm ../../roboflow.zip
 cp train/_darknet.labels data/obj.names
 mkdir data/obj
+
+rm -rf train/*
+rm -rf valid/*
+rm -rf data/obj/*
+
 cp train/*.jpg data/obj/
 cp valid/*.jpg data/obj/
 
