@@ -1,4 +1,4 @@
-from YoloV4ObjectDetector import ObjectDetector
+from SistemaMira import ObjectDetector
 from FaceDetector import FaceDetector
 from VideoUtils import VideoUtils
 
@@ -23,4 +23,4 @@ def image_test():
 
 
 if "__main__":
-    image_test()
+    main()
