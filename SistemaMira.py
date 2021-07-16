@@ -15,6 +15,7 @@ allowed_classes = ['person']
 class ObjectDetector:
 
     def __init__(self):
+        self.fire_threshold = 20
         self.confidence_thresold = 0.5
         self.thresold = 0.3
         self.LABELS = open(labelsPath).read().strip().split("\n")
@@ -112,6 +113,12 @@ class ObjectDetector:
         if len(idxs) > 0:
             # loop over the indexes we are keeping
             for i in idxs.flatten():
+                
+                #############################
+                font                   = cv2.FONT_HERSHEY_SIMPLEX
+                #############################
+                
+                
                 # extract the bounding box coordinates
                 (x, y) = (boxes[i][0], boxes[i][1])
                 (w, h) = (boxes[i][2], boxes[i][3])
@@ -124,8 +131,31 @@ class ObjectDetector:
                 
                 image_center = (int(W/2) , int(H/2))
                 
+                diff_X = image_center[0] - center_coordinates_detected[0]
+                diff_Y = image_center[1] - center_coordinates_detected[1]
+                
                 cv2.circle(image, center_coordinates_detected, 5, color, 2)
                 cv2.circle(image, image_center, 5, color_image_center, 2)
+                cv2.putText(image,"X: {:.4f} , Y:{:.4f}".format(diff_X, diff_Y), 
+                    center_coordinates_detected, 
+                    font, 
+                    0.5,
+                    color_image_center,
+                    2)
+                if (diff_Y < 0):
+                    cv2.putText(image,"DESCE", (0,20), font, 0.5,color_image_center,2)
+                else:
+                    cv2.putText(image,"SOBE", (0,20), font, 0.5,color_image_center,2)
+                    
+                if (diff_X > 0):
+                    cv2.putText(image,"DIREITA", (0,60), font, 0.5,color_image_center,2)
+                else:
+                    cv2.putText(image,"ESQUERDA", (0,60), font, 0.5,color_image_center,2)
+                
+                if abs(diff_Y) < self.fire_threshold and abs(diff_X) < self.fire_threshold:
+                   cv2.putText(image,"ATIRAAAAAA", (0,100), font, 0.5,color_image_center,2) 
+                
+                
                 text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, color, 2)
