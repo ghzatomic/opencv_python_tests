@@ -2,8 +2,9 @@ import numpy as np
 import cv2
 import time
 import os
+from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 
-yolo_path = "yolo/yolov4optimal"
+yolo_path = "yolo/yolov4tiny"
 
 labelsPath = os.path.sep.join([yolo_path, "coco.names"])
 weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
@@ -12,10 +13,10 @@ configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
 
 allowed_classes = ['person']
 
-class ObjectDetector:
+class ObjectDetector(BluetoothArduinoCommunication):
 
     def __init__(self):
-        self.fire_threshold = 20
+        BluetoothArduinoCommunication.__init__(self)
         self.confidence_thresold = 0.5
         self.thresold = 0.3
         self.LABELS = open(labelsPath).read().strip().split("\n")
@@ -37,6 +38,7 @@ class ObjectDetector:
             self.ln = [self.ln[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
         return self.ln
 
+
     def detectaImagem(self, imagePath, show=False):
         image = ObjectDetector.createImageFromPath(imagePath)
         image = self.detectaImagemCV2(image)
@@ -49,7 +51,10 @@ class ObjectDetector:
         return image
 
     def detectaImagemCV2(self, image):
+        if not self.connected:
+            self.do_connect()
         print("Detectando ... ")
+        self.in_target = False
         (H, W) = image.shape[:2]
         ln = self.createLayers()
 
@@ -142,18 +147,8 @@ class ObjectDetector:
                     0.5,
                     color_image_center,
                     2)
-                if (diff_Y < 0):
-                    cv2.putText(image,"DESCE", (0,20), font, 0.5,color_image_center,2)
-                else:
-                    cv2.putText(image,"SOBE", (0,20), font, 0.5,color_image_center,2)
-                    
-                if (diff_X > 0):
-                    cv2.putText(image,"DIREITA", (0,60), font, 0.5,color_image_center,2)
-                else:
-                    cv2.putText(image,"ESQUERDA", (0,60), font, 0.5,color_image_center,2)
+                self.determina_target(diff_X, diff_Y)
                 
-                if abs(diff_Y) < self.fire_threshold and abs(diff_X) < self.fire_threshold:
-                   cv2.putText(image,"ATIRAAAAAA", (0,100), font, 0.5,color_image_center,2) 
                 
                 
                 text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
