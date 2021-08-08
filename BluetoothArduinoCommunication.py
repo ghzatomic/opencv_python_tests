@@ -6,28 +6,31 @@ class BluetoothArduinoCommunication:
         self.connected = False
         self.fire_threshold = 20
         self.pos_threshold = 20
-        self.connect = True
+        self.connect = False
+        self.bluetooth = False
         
     def do_connect(self):
         if not self.connect:
             return
-        # nearby_devices = bluetooth.discover_devices(lookup_names=True)
-        # print("Found {} devices.".format(len(nearby_devices)))
-        # linvor_addr = None
-        # for addr, name in nearby_devices:
-        #     print("  {} - {}".format(addr, name))
-        #     if name == "linvor":
-        #         linvor_addr = addr
-        #         print("Achou !")
+        if self.bluetooth:
+            pass
+            # nearby_devices = bluetooth.discover_devices(lookup_names=True)
+            # print("Found {} devices.".format(len(nearby_devices)))
+            # linvor_addr = None
+            # for addr, name in nearby_devices:
+            #     print("  {} - {}".format(addr, name))
+            #     if name == "linvor":
+            #         linvor_addr = addr
+            #         print("Achou !")
 
-        # print("Connecting to \"{}\" on {}".format(linvor_addr, "linvor"))
+            # print("Connecting to \"{}\" on {}".format(linvor_addr, "linvor"))
 
-        # port = 1
-        # # Create the client socket
-        # self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        # self.sock.connect((linvor_addr, port))
-
-        self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=None)
+            # port = 1
+            # # Create the client socket
+            # self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+            # self.sock.connect((linvor_addr, port))
+        else:
+            self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=None)
 
         print("Connected")
         
@@ -36,11 +39,14 @@ class BluetoothArduinoCommunication:
 
     def send_message(self, message):
         if self.connected:
-            self.arduino.write(message.encode())
-            self.arduino.flush()
-            self.arduino.reset_input_buffer()
-            self.arduino.reset_output_buffer()
-            #self.sock.send(message.encode())
+            if self.bluetooth:
+                self.sock.send(message.encode())
+            else:
+                self.arduino.write(message.encode())
+                self.arduino.flush()
+                self.arduino.reset_input_buffer()
+                self.arduino.reset_output_buffer()
+
     
     def send_sobe(self, vel):
         vel = str(vel)

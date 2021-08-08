@@ -9,7 +9,6 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         BluetoothArduinoCommunication.__init__(self)
         self.face_classifier = FaceDetectorMira.createCascadeClassifier_face()
         self.eye_classifier = FaceDetectorMira.createCascadeClassifier_olhos()
-        #self.connect_bt = False
 
     def detectaFaceImagem(self, image):
         image_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)

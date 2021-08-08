@@ -1,6 +1,6 @@
 numpy
 opencv-python
-
 PyBluez
+pyserial
 #numpy==1.20.2
 #opencv-python==4.5.1.48

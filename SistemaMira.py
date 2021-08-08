@@ -53,7 +53,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
     def detectaImagemCV2(self, image):
         if not self.connected:
             self.do_connect()
-        print("Detectando ... ")
+        #print("Detectando ... ")
         self.in_target = False
         (H, W) = image.shape[:2]
         ln = self.createLayers()
@@ -68,7 +68,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         layerOutputs = self.net.forward(ln)
         end = time.time()
         # show timing information on YOLO
-        print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        #print("[INFO] YOLO took {:.6f} seconds".format(end - start))
 
         # initialize our lists of detected bounding boxes, confidences, and
         # class IDs, respectively
@@ -114,7 +114,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
             self.thresold)
 
         # ensure at least one detection exists
-        print("Encontrados : ", len(idxs))
+        #print("Encontrados : ", len(idxs))
         if len(idxs) > 0:
             # loop over the indexes we are keeping
             for i in idxs.flatten():
