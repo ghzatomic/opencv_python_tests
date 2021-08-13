@@ -11,8 +11,14 @@
 
 #define TRIGGER_FIRE  5
 
-const int servoXStartRestPosition   = 90;  //Starting position X
-const int servoYStartRestPosition   = 120;  //Starting position Y
+const int servoXStartRestPosition   = 1500;  //Starting position X
+const int servoYStartRestPosition   = 1700;  //Starting position Y
+
+const int servoXMaxPos   = 2000;
+const int servoXMinPos   = 1000;
+
+const int servoYMaxPos   = 2000;
+const int servoYMinPos   = 1000;
 
 Servo servo_X; // servo controller (multiple can exist)
 Servo servo_Y; // servo controller (multiple can exist)
@@ -85,8 +91,8 @@ void comandoEncontrado(String comando){
 void reset(){
   last_posX = servoXStartRestPosition;
   last_posY = servoYStartRestPosition;
-  servo_Y.write(servoYStartRestPosition);
-  servo_X.write(servoXStartRestPosition);
+  servo_Y.writeMicroseconds(servoYStartRestPosition);
+  servo_X.writeMicroseconds(servoXStartRestPosition);
   delay(100);
 }
 
@@ -101,13 +107,6 @@ int charToInt(char c){
   return c - '0';
 }
 
-void scan(){
-  servo_X.write(0); 
-  delay(2000); 
-  servo_X.write(180); 
-  delay(2000); 
-}
-
 void atira(){
   digitalWrite(TRIGGER_FIRE, HIGH);
   delay(100);
@@ -117,24 +116,24 @@ void atira(){
 
 int multiplicador_vel_servo(int forca){
   if (forca == 3){
-    return 3;
+    return 15;
   }else if (forca == 2){
-    return 2;
+    return 5;
   }else{
     return 1;
   }
 }
 
 void controla_posicoes_limites(){
-  if (posY >= 180){
-    posY = 180;
-  }else if (posY <= 10){
-    posY = 10;
+  if (posY >= servoYMaxPos){
+    posY = servoYMaxPos;
+  }else if (posY <= servoYMinPos){
+    posY = servoYMinPos;
   }
-  if (posX >= 180){
-    posX = 180;
-  }else if (posX <= 0){
-    posX = 0;
+  if (posX >= servoXMaxPos){
+    posX = servoXMaxPos;
+  }else if (posX <= servoXMinPos){
+    posX = servoXMinPos;
   }
 }
 
@@ -163,10 +162,10 @@ void update_servos(){
   //servo_Y.attach(servo_pinY); // start servo control
   //servo_X.attach(servo_pinX); // start servo control
   if (last_posX != posX){
-    servo_X.write(posX);  
+    servo_X.writeMicroseconds(posX);  
   }
   if (last_posY != posY){
-    servo_Y.write(posY);  
+    servo_Y.writeMicroseconds(posY);  
   }
   //servo_Y.detach();
   //servo_X.detach();

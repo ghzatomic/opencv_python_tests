@@ -39,30 +39,30 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         #print("[INFO] {:.6f} seconds".format(end - start))
         cv.circle(img, image_center, 5, color_image_center, 2)
         font                   = cv.FONT_HERSHEY_SIMPLEX
-        if len(faces) == 0:
-            self.nao_encontrado()
-        else:
-            for i in range(faces.shape[2]):
-                confidence = faces[0, 0, i, 2]
-                if confidence > 0.5:
-                    box = faces[0, 0, i, 3:7] * np.array([w, h, w, h])
-                    (x,y,x1, y1) = box.astype("int")
-                    
-                    center_coordinates_detected = (int((x+x1)/2),int((y+y1)/2))
-                    
-                    diff_X = image_center[0] - center_coordinates_detected[0]
-                    diff_Y = image_center[1] - center_coordinates_detected[1]
-                    
-                    cv.circle(img, center_coordinates_detected, 5, (255,255,0), 2)
-                    
-                    cv.rectangle(img,(x,y),(x1, y1),(255,0,0),2)
-                    
-                    self.determina_target(diff_X, diff_Y)
+        encontrados = 0
+        for i in range(faces.shape[2]):
+            confidence = faces[0, 0, i, 2]
+            if confidence > 0.6:
+                encontrados += 1
+                box = faces[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (x,y,x1, y1) = box.astype("int")
+                
+                center_coordinates_detected = (int((x+x1)/2),int((y+y1)/2))
+                
+                diff_X = image_center[0] - center_coordinates_detected[0]
+                diff_Y = image_center[1] - center_coordinates_detected[1]
+                
+                cv.circle(img, center_coordinates_detected, 5, (255,255,0), 2)
+                
+                cv.rectangle(img,(x,y),(x1, y1),(255,0,0),2)
+                
+                self.determina_target(diff_X, diff_Y)
 
-                # eyes = self.eye_classifier.detectMultiScale(roi_gray)
-                # for (ex,ey,ew,eh) in eyes:
-                #     cv.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
-    
+            # eyes = self.eye_classifier.detectMultiScale(roi_gray)
+            # for (ex,ey,ew,eh) in eyes:
+            #     cv.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+        if encontrados == 0:
+            self.nao_encontrado()
         return img
     @staticmethod
     def createCascadeClassifier_face():

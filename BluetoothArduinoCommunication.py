@@ -7,10 +7,14 @@ class BluetoothArduinoCommunication:
         self.fire_threshold = 20
         self.pos_threshold = 20
         self.connect = True
-        self.posX = 180
+        self.posX = 1500
         self.send_direita_pos = True
         self.bluetooth=False
-        
+        self.xMaxPos = 2000
+        self.xMinPos = 1000
+        self.yMaxPos = 2000
+        self.yMinPos = 1000
+                
     def do_connect(self):
         if not self.connect:
             return
@@ -52,28 +56,28 @@ class BluetoothArduinoCommunication:
     
     def send_sobe(self, vel):
         vel = str(vel)
-        #print("SOBE !")
+        print("SOBE !")
         self.send_message(vel+"00000|")
     
     def send_desce(self, vel):
         vel = str(vel)
-        #print("DESCE !")
+        print("DESCE !")
         self.send_message("0"+vel+"0000|")
     
     def send_direita(self, vel):
         vel = str(vel)
-        #print("DIREITA !")
-        nextPosX = self.posX - 1
-        if nextPosX >= 0:
+        print("DIREITA !")
+        nextPosX = self.posX - self.vel_multi(vel)
+        if nextPosX >= self.xMinPos:
             self.posX = nextPosX
         self.send_message("00"+vel+"000|")
     
     def send_esquerda(self, vel):
         vel = str(vel)
-        nextPosX = self.posX + 1
-        if nextPosX <= 360:
+        nextPosX = self.posX + self.vel_multi(vel)
+        if nextPosX <= self.xMaxPos:
             self.posX = nextPosX
-        #print("ESQUERDA !")
+        print("ESQUERDA !")
         self.send_message("000"+vel+"00|")
     
     def send_atira(self):
@@ -82,14 +86,14 @@ class BluetoothArduinoCommunication:
 
     def scan(self):
         print(self.posX)
-        if self.posX <=0 :
+        if self.posX <=self.xMinPos :
             self.send_direita_pos = False
-        elif self.posX >=360:
+        elif self.posX >=self.xMaxPos:
             self.send_direita_pos = True
         if self.send_direita_pos:
-            self.send_direita(1)
+            self.send_direita(2)
         else:
-            self.send_esquerda(1)
+            self.send_esquerda(2)
     
     def send_reset(self):
         print("RESET !")
@@ -124,10 +128,18 @@ class BluetoothArduinoCommunication:
                 
     def determina_velocidade(self, diff):
         diff = abs(diff)
-        # if diff >= 100:
-        #     return 3
-        # elif diff < 100 and diff >20:
-        #     return 2
-        # else:
-        #     return 1
-        return 1
+        if diff >= 100:
+            return 3
+        elif diff < 100 and diff >20:
+            return 2
+        else:
+            return 1
+        #return 1
+    def vel_multi(self, vel):
+        if vel == "3":
+            return 15
+        elif vel == "2":
+            return 5
+        else:
+            return 1
+        #return 1
