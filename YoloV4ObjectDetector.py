@@ -3,11 +3,11 @@ import cv2
 import time
 import os
 
-yolo_path = "yolo/plantacaocafe"
+yolo_path = "yolo/yolov4tiny"
 
 labelsPath = os.path.sep.join([yolo_path, "coco.names"])
-weightsPath = os.path.sep.join([yolo_path, "custom-yolov4-tiny-detector_best.weights"])
-configPath = os.path.sep.join([yolo_path, "custom-yolov4-tiny-detector.cfg"])
+weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
+configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
 
 class ObjectDetector:
 

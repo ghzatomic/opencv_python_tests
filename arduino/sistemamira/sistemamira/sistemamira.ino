@@ -9,16 +9,16 @@
 #define BTHC05_PIN_TXD  9
 #define BTHC05_PIN_RXD  10
 
-#define TRIGGER_FIRE  2
+#define TRIGGER_FIRE  5
 
 const int servoXStartRestPosition   = 90;  //Starting position X
-const int servoYStartRestPosition   = 90;  //Starting position Y
+const int servoYStartRestPosition   = 120;  //Starting position Y
 
 Servo servo_X; // servo controller (multiple can exist)
 Servo servo_Y; // servo controller (multiple can exist)
 
-int posX = 90;
-int posY = 90;
+int posX = servoXStartRestPosition;
+int posY = servoYStartRestPosition;
 
 int last_posX = posX;
 int last_posY = posY;
@@ -40,21 +40,19 @@ void setup() {
   pinMode(servo_pinY, OUTPUT); 
 
   servo_X.attach(servo_pinX); // start servo control
-  servo_X.write(servoXStartRestPosition);
   //servo_X.detach();
   servo_Y.attach(servo_pinY); // start servo control
-  servo_Y.write(servoYStartRestPosition);
   //servo_Y.detach();
+  reset();
+
+  digitalWrite(TRIGGER_FIRE, HIGH);
   delay(1000);
+  digitalWrite(TRIGGER_FIRE, LOW);
   
 }
 
 
 String comando = "";
-
-int last_radar_pos_x = servoXStartRestPosition;
-int last_radar_pos_y = servoYStartRestPosition;
-
 
 void comandoEncontrado(String comando){
   Serial.println(comando);
@@ -75,8 +73,21 @@ void comandoEncontrado(String comando){
     //Serial.println("ESQUERDA");
   }
   if (comando[4] != '0'){
+    atira();
     //Serial.println("ATIRA");
   }
+  if (comando[5] != '0'){
+    reset();
+    //Serial.println("ATIRA");
+  }
+}
+
+void reset(){
+  last_posX = servoXStartRestPosition;
+  last_posY = servoYStartRestPosition;
+  servo_Y.write(servoYStartRestPosition);
+  servo_X.write(servoXStartRestPosition);
+  delay(100);
 }
 
 char floatToStr(float val){

@@ -15,7 +15,7 @@ allowed_classes = ['person']
 
 class ObjectDetector(BluetoothArduinoCommunication):
 
-    def __init__(self):
+    def __init__(self, connect_bt=False):
         BluetoothArduinoCommunication.__init__(self)
         self.confidence_thresold = 0.5
         self.thresold = 0.3
@@ -26,6 +26,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
             dtype="uint8")
         self.net = cv2.dnn.readNetFromDarknet(configPath, weightsPath)
         self.ln = None
+        self.connect_bt = connect_bt
         
     @staticmethod
     def createImageFromPath(imagePath):
@@ -62,7 +63,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         # pass of the YOLO object detector, giving us our bounding boxes and
         # associated probabilities
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416),
-            swapRB=True, crop=False)
+            swapRB=True, crop=True)
         self.net.setInput(blob)
         start = time.time()
         layerOutputs = self.net.forward(ln)
@@ -154,6 +155,8 @@ class ObjectDetector(BluetoothArduinoCommunication):
                 text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                     0.5, color, 2)
+        else:
+            self.nao_encontrado()
         # show the output image
         return image
 

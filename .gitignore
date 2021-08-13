@@ -3,6 +3,7 @@ __pycache__
 /yolo/yolov3.weights
 
 /content
+/yolo/**
 /yolo/darknet*
 /yolo/*.weights
 /yolo/plantacaocafe/custom-yolov4-tiny-detector_best.weights

@@ -5,12 +5,27 @@ class VideoUtils:
 
     def __init__(self):
         pass
+    
+    def returnCameraIndexes(self):
+        index = 0
+        arr = []
+        i = 10
+        while i > 0:
+            cap = cv.VideoCapture(index)
+            if cap.read()[0]:
+                arr.append(index)
+                cap.release()
+            index += 1
+            i -= 1
+        return arr
 
     def videoCapture(self, videoTransformerFunction=None):
-        cap = cv.VideoCapture(0)
+        print(self.returnCameraIndexes())
+        cap = cv.VideoCapture(3)
         scale_percent = 60 # percent of original size
         while 1:
             ret, img = cap.read()
+            img = cv.flip(img, 1)
             # width = int(img.shape[1] * scale_percent / 100)
             # height = int(img.shape[0] * scale_percent / 100)
             # dim = (width, height)
