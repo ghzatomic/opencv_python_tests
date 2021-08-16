@@ -3,7 +3,7 @@ import cv2
 import time
 import os
 
-yolo_path = "yolo/yolov4tiny"
+yolo_path = "yolo/yolov4optimal"
 
 labelsPath = os.path.sep.join([yolo_path, "coco.names"])
 weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
@@ -99,7 +99,7 @@ class ObjectDetector:
         # boxes
         idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidence_thresold,
             self.thresold)
-
+        
         # ensure at least one detection exists
         print("Encontrados : ", len(idxs))
         if len(idxs) > 0:

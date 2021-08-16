@@ -6,9 +6,9 @@ from VideoUtils import VideoUtils
 face_detector = FaceDetectorMira(True)
 detector_pessoa = MiraYolov4()
 object_detector = ObjectDetector()
-video_utils =VideoUtils()
+video_utils = VideoUtils()
 
-image_path = "imagem/TESTEcafe.jpeg"
+image_path = "imagem/captcha2.jpeg"
 
 def detector_pessoa_func(img):
     return detector_pessoa.detectaImagemCV2(img)
@@ -28,3 +28,4 @@ def image_test():
 
 if "__main__":
     main()
+    #image_test()
