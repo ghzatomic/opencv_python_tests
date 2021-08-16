@@ -3,13 +3,15 @@
 #include <stdlib.h>
 #include <SoftwareSerial.h>
 
-#define servo_pinX 8 
-#define servo_pinY 7
+#define servo_pinX 6 
+#define servo_pinY 3
 
 #define BTHC05_PIN_TXD  9
 #define BTHC05_PIN_RXD  10
 
 #define TRIGGER_FIRE  5
+
+const bool useBluetooth = false;
 
 const int servoXStartRestPosition   = 1500;  //Starting position X
 const int servoYStartRestPosition   = 1700;  //Starting position Y
@@ -37,8 +39,11 @@ void setup() {
   Serial.setTimeout(1);
   while (!Serial) ; // wait for serial port to connect. Needed for native USB
   Serial.println("start");
-  //bthc05.begin(9600);
-  //bthc05.setTimeout(1);
+  if (useBluetooth){
+    bthc05.begin(9600);
+    bthc05.setTimeout(1);
+  }
+  
 
   pinMode(TRIGGER_FIRE, OUTPUT); 
 
@@ -173,13 +178,23 @@ void update_servos(){
 
 void loop() {
   // put your main code here, to run repeatedly:
-  int aval = Serial.available();
-  //int aval = true;
+  int aval = 0;
+  if (useBluetooth){
+    aval = bthc05.available();
+  }else{
+    aval = Serial.available();
+  }
+  
   char character;
   if (aval) {
-    character = Serial.read();//bthc05.read();
+    if (useBluetooth){
+      character = bthc05.read();
+    }else{
+      character = Serial.read();//;
+    }
+    Serial.println(character);
     if (character == '|'){
-      //Serial.println(comando);
+      Serial.println(comando);
       comandoEncontrado(comando);
       comando = "";        
     }else{

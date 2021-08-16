@@ -8,7 +8,7 @@ detector_pessoa = MiraYolov4()
 object_detector = ObjectDetector()
 video_utils = VideoUtils()
 
-image_path = "imagem/captcha2.jpeg"
+image_path = "imagem/captcha3.jpeg"
 
 def detector_pessoa_func(img):
     return detector_pessoa.detectaImagemCV2(img)

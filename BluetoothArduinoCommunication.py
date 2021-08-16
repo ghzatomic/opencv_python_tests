@@ -20,23 +20,23 @@ class BluetoothArduinoCommunication:
             return
         if self.bluetooth:
             pass
-            # nearby_devices = bluetooth.discover_devices(lookup_names=True)
-            # print("Found {} devices.".format(len(nearby_devices)))
-            # linvor_addr = None
-            # for addr, name in nearby_devices:
-            #     print("  {} - {}".format(addr, name))
-            #     if name == "linvor":
-            #         linvor_addr = addr
-            #         print("Achou !")
+            nearby_devices = bluetooth.discover_devices(lookup_names=True)
+            print("Found {} devices.".format(len(nearby_devices)))
+            linvor_addr = None
+            for addr, name in nearby_devices:
+                print("  {} - {}".format(addr, name))
+                if name == "linvor":
+                    linvor_addr = addr
+                    print("Achou !")
 
-            # print("Connecting to \"{}\" on {}".format(linvor_addr, "linvor"))
+            print("Connecting to \"{}\" on {}".format(linvor_addr, "linvor"))
 
-            # port = 1
-            # # Create the client socket
-            # self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            # self.sock.connect((linvor_addr, port))
+            port = 1
+            # Create the client socket
+            self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+            self.sock.connect((linvor_addr, port))
         else:
-            self.arduino = serial.Serial(port='/dev/ttyACM0', baudrate=115200, timeout=None)
+            self.arduino = serial.Serial(port='/dev/ttyUSB0', baudrate=115200, timeout=None)
 
         print("Connected")
         self.send_reset()
