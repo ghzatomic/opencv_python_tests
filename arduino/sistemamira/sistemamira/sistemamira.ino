@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <SoftwareSerial.h>
 
-#define servo_pinX 6 
+#define servo_pinX 4 
 #define servo_pinY 3
 
 #define BTHC05_PIN_TXD  9
 #define BTHC05_PIN_RXD  10
 
-#define TRIGGER_FIRE  5
+#define TRIGGER_FIRE  6
 
 const bool useBluetooth = false;
 
