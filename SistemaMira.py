@@ -89,7 +89,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
                     
                     cv2.circle(image, center_coordinates_detected, 5, color_image_center, 2)
                     cv2.rectangle(image, box, color_image_center, 1)
-
+                    
 
         return image
 
