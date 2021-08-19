@@ -17,7 +17,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
 
     def __init__(self, connect_bt=False):
         BluetoothArduinoCommunication.__init__(self)
-        self.confidence_thresold = 0.4
+        self.confidence_thresold = 0.3
         self.thresold = 0.2
         self.LABELS = open(labelsPath).read().strip().split("\n")
         # initialize a list of colors to represent each possible class label
@@ -30,7 +30,6 @@ class ObjectDetector(BluetoothArduinoCommunication):
         self.net.setInputSwapRB(True)
         #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         #self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-        self.ln = None
         self.connect = connect_bt
         
     @staticmethod

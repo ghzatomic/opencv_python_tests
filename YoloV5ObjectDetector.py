@@ -19,25 +19,24 @@ class ObjectDetector:
         np.random.seed(42)
         self.COLORS = np.random.randint(0, 255, size=(len(self.LABELS), 3),
             dtype="uint8")
-        self.net = torch.hub.load('ultralytics/yolov5', 'yolov5x', pretrained=True, classes=len(self.LABELS))  # or yolov5m, yolov5l, yolov5x, custom
+        self.net = None
         
-        #model = torch.hub.load('ultralytics/yolov5', 'custom', path=weightsPath, source='local') 
+    def get_net(self):
+        if not self.net:
+            self.net = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True, classes=len(self.LABELS))  # or yolov5m, yolov5l, yolov5x, custom
+            
+            #model = torch.hub.load('ultralytics/yolov5', 'custom', path=weightsPath, source='local') 
         
-        #self.net.load_state_dict(torch.load('...')['model'].state_dict())
-        #model.load_state_dict(torch.load('yolov5s_10cls.pt')['model'].state_dict())
+            #self.net.load_state_dict(torch.load('...')['model'].state_dict())
+            #model.load_state_dict(torch.load('yolov5s_10cls.pt')['model'].state_dict())
 
-        #self.net = model.fuse().autoshape()
+            #self.net = model.fuse().autoshape()
+            
+        return self.net
         
     @staticmethod
     def createImageFromPath(imagePath):
         return cv2.imread(imagePath)
-
-    def createLayers(self):
-        if not self.ln:
-            # determine only the *output* layer names that we need from YOLO
-            self.ln = self.net.getLayerNames()
-            self.ln = [self.ln[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
-        return self.ln
 
     def detectaImagem(self, imagePath, show=False):
         image = ObjectDetector.createImageFromPath(imagePath)
@@ -51,10 +50,7 @@ class ObjectDetector:
         return image
 
     def detectaImagemCV2(self, image):
-        
-        results = self.net(image)
-
-        # Results
+        results = self.get_net()(image)
         results = self.isola_scores(results)
         self.plot_boxes(results, image)
         return image
