@@ -10,11 +10,17 @@
 #define BTHC05_PIN_RXD  10
 
 #define TRIGGER_FIRE  6
+ 
+#define IN4 10
+#define IN3 9
+#define ENABLEB 4
+
+const bool usedriver_x = false;
 
 const bool useBluetooth = false;
 
 const int servoXStartRestPosition   = 1500;  //Starting position X
-const int servoYStartRestPosition   = 1700;  //Starting position Y
+const int servoYStartRestPosition   = 1500;  //Starting position Y
 
 const int servoXMaxPos   = 2000;
 const int servoXMinPos   = 1000;
@@ -50,8 +56,16 @@ void setup() {
   pinMode(servo_pinX, OUTPUT); 
   pinMode(servo_pinY, OUTPUT); 
 
-  servo_X.attach(servo_pinX); // start servo control
+  if (!usedriver_x){
+    servo_X.attach(servo_pinX); // start servo control
   //servo_X.detach();
+  }else{
+    pinMode(ENABLEB, OUTPUT); 
+    pinMode(IN4, OUTPUT); 
+    pinMode(IN3, OUTPUT); 
+    digitalWrite(ENABLEB, HIGH);
+  }
+  
   servo_Y.attach(servo_pinY); // start servo control
   //servo_Y.detach();
   reset();
@@ -76,11 +90,19 @@ void comandoEncontrado(String comando){
     //Serial.println("DESCE");
   }
   if (comando[2] != '0'){
-    moveX(false, charToInt(comando[2]));
+    if (!usedriver_x){
+      moveX(false, charToInt(comando[2]));
+    }else{
+      moveX_driver(false);
+    }
     //Serial.println("DIREITA");
   }
   if (comando[3] != '0'){
-    moveX(true, charToInt(comando[3]));
+    if (!usedriver_x){
+      moveX(true, charToInt(comando[3]));
+    }else{
+      moveX_driver(true);
+    }
     //Serial.println("ESQUERDA");
   }
   if (comando[4] != '0'){
@@ -142,6 +164,20 @@ void controla_posicoes_limites(){
   }
 }
 
+void moveX_driver(bool direita){
+  if(direita){
+    posX += multiplicador_vel_servo(1);  
+    digitalWrite(IN4, HIGH);
+    delay(80);
+    digitalWrite(IN4, LOW);
+  }else{
+    posX -= multiplicador_vel_servo(1);
+    digitalWrite(IN3, HIGH);
+    delay(80);
+    digitalWrite(IN3, LOW);
+  }
+}
+
 void moveX(bool direita, int forca){
   if(direita){
     posX += multiplicador_vel_servo(forca);    
@@ -166,8 +202,10 @@ void update_servos(){
   controla_posicoes_limites();
   //servo_Y.attach(servo_pinY); // start servo control
   //servo_X.attach(servo_pinX); // start servo control
-  if (last_posX != posX){
-    servo_X.writeMicroseconds(posX);  
+  if (!usedriver_x){
+    if (last_posX != posX){
+      servo_X.writeMicroseconds(posX);  
+    }
   }
   if (last_posY != posY){
     servo_Y.writeMicroseconds(posY);  

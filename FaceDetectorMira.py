@@ -7,10 +7,9 @@ from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 class FaceDetectorMira(BluetoothArduinoCommunication):
 
     def __init__(self, connect_bt=False):
-        BluetoothArduinoCommunication.__init__(self)
+        BluetoothArduinoCommunication.__init__(self, connect=False)
         self.face_classifier = FaceDetectorMira.createCascadeClassifier_face()
         self.eye_classifier = FaceDetectorMira.createCascadeClassifier_olhos()
-        self.connect = False
 
     def detectaFaceImagem(self, image):
         image_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)

@@ -21,7 +21,7 @@ class VideoUtils:
 
     def videoCapture(self, videoTransformerFunction=None):
         print(self.returnCameraIndexes())
-        cap = cv.VideoCapture(3)
+        cap = cv.VideoCapture(1)
         scale_percent = 60 # percent of original size
         while 1:
             ret, img = cap.read()
@@ -40,10 +40,3 @@ class VideoUtils:
         cap.release()
         cv.destroyAllWindows()
 
-    @staticmethod
-    def createCascadeClassifier_face():
-        return cv.CascadeClassifier("lib\haarcascades\haarcascade_frontalface_default.xml")
-
-    @staticmethod
-    def createCascadeClassifier_olhos():
-        return cv.CascadeClassifier("lib\haarcascades\haarcascade_eye.xml")

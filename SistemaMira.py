@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import time
 import os
+import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 
 yolo_path = "yolo/yolov4tiny"
@@ -16,7 +17,7 @@ allowed_classes = ['person']
 class ObjectDetector(BluetoothArduinoCommunication):
 
     def __init__(self, connect_bt=False):
-        BluetoothArduinoCommunication.__init__(self)
+        BluetoothArduinoCommunication.__init__(self, connect=connect_bt)
         self.confidence_thresold = 0.3
         self.thresold = 0.2
         self.LABELS = open(labelsPath).read().strip().split("\n")
@@ -28,9 +29,9 @@ class ObjectDetector(BluetoothArduinoCommunication):
         self.net.setInputSize(416, 416)
         self.net.setInputScale(1.0/255.0)
         self.net.setInputSwapRB(True)
+        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
         #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         #self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-        self.connect = connect_bt
         
     @staticmethod
     def createImageFromPath(imagePath):
@@ -60,7 +61,6 @@ class ObjectDetector(BluetoothArduinoCommunication):
             self.do_connect()
         self.in_target = False
         (H, W) = image.shape[:2]
-        
         image_center = (int(W/2) , int(H/2))
         color_image_center = (0, 255, 0)
         cv2.circle(image, image_center, 5, color_image_center, 2)
@@ -68,6 +68,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         if len(boxes) == 0:
             self.nao_encontrado()
         else:
+            detectados_arr = []
             for classID, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
                 if self.LABELS[classID] not in allowed_classes:
                     continue
@@ -84,12 +85,14 @@ class ObjectDetector(BluetoothArduinoCommunication):
                     
                     cv2.circle(image, center_coordinates_detected, 5, (255,255,0), 2)
                     
-                    self.determina_target(diff_X, diff_Y)
-                    
                     cv2.circle(image, center_coordinates_detected, 5, color_image_center, 2)
                     cv2.rectangle(image, box, color_image_center, 1)
+                    detectados_arr.append([w*h,x,y,w,h,diff_X,diff_Y, box])
                     
-
+            maior_enquadro = BluetoothArduinoCommunication.calcula_maior_quadrado(detectados_arr)
+            if maior_enquadro and len(maior_enquadro)>0:
+                self.determina_target(maior_enquadro[5], maior_enquadro[6])
+                cv2.rectangle(image,maior_enquadro[7],(100,120,0),2)
         return image
 
     

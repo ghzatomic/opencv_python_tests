@@ -2,11 +2,11 @@ import bluetooth
 import serial
 
 class BluetoothArduinoCommunication:
-    def __init__(self):
+    def __init__(self, connect=True):
         self.connected = False
         self.fire_threshold = 20
         self.pos_threshold = 20
-        self.connect = True
+        self.connect = connect
         self.posX = 1500
         self.send_direita_pos = True
         self.bluetooth=False
@@ -36,7 +36,7 @@ class BluetoothArduinoCommunication:
             self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             self.sock.connect((linvor_addr, port))
         else:
-            self.arduino = serial.Serial(port='/dev/ttyUSB0', baudrate=115200, timeout=None)
+            self.arduino = serial.Serial(port='COM4', baudrate=115200, timeout=None)
 
         print("Connected")
         self.send_reset()
@@ -45,28 +45,32 @@ class BluetoothArduinoCommunication:
 
     def send_message(self, message):
         if self.connected:
-            if self.bluetooth:
-                self.sock.send(message.encode())
-            else:
-                self.arduino.write(message.encode())
-                self.arduino.flush()
-                self.arduino.reset_input_buffer()
-                self.arduino.reset_output_buffer()
+            try:
+                if self.bluetooth:
+                    self.sock.send(message.encode())
+                else:
+                    self.arduino.write(message.encode())
+                    self.arduino.flush()
+                    self.arduino.reset_input_buffer()
+                    self.arduino.reset_output_buffer()
+            except:
+                pass
+            
 
     
     def send_sobe(self, vel):
         vel = str(vel)
-        print("SOBE !")
+        #print("SOBE !")
         self.send_message(vel+"00000|")
     
     def send_desce(self, vel):
         vel = str(vel)
-        print("DESCE !")
+        #print("DESCE !")
         self.send_message("0"+vel+"0000|")
     
     def send_direita(self, vel):
         vel = str(vel)
-        print("DIREITA !")
+        #print("DIREITA !")
         nextPosX = self.posX - self.vel_multi(vel)
         if nextPosX >= self.xMinPos:
             self.posX = nextPosX
@@ -77,11 +81,11 @@ class BluetoothArduinoCommunication:
         nextPosX = self.posX + self.vel_multi(vel)
         if nextPosX <= self.xMaxPos:
             self.posX = nextPosX
-        print("ESQUERDA !")
+        #print("ESQUERDA !")
         self.send_message("000"+vel+"00|")
     
     def send_atira(self):
-        print("ATIRA !")
+        #print("ENQUADROU !")
         self.send_message("000010|")
 
     def scan(self):
@@ -143,3 +147,17 @@ class BluetoothArduinoCommunication:
         else:
             return 1
         #return 1
+
+    @staticmethod
+    def calcula_maior_quadrado(detectados_arr):
+        target = None
+        last_box_area = None
+        for item in detectados_arr:
+            distancia = item[0]
+            if not last_box_area:
+                last_box_area = distancia
+                target = item
+            elif distancia > last_box_area:
+                last_box_area = distancia
+                target = item
+        return target

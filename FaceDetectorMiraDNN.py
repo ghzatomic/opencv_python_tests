@@ -2,15 +2,15 @@ import numpy as np
 import cv2 as cv
 import time
 from time import sleep
+import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 
 class FaceDetectorMira(BluetoothArduinoCommunication):
 
-    def __init__(self, connect_bt=False):
-        BluetoothArduinoCommunication.__init__(self)
+    def __init__(self, connect=False):
+        BluetoothArduinoCommunication.__init__(self, connect=connect)
         self.face_classifier = FaceDetectorMira.createCascadeClassifier_face()
         self.eye_classifier = FaceDetectorMira.createCascadeClassifier_olhos()
-        self.connect = True
 
     def detectaFaceImagem(self, image):
         image_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -40,6 +40,7 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         cv.circle(img, image_center, 5, color_image_center, 2)
         font                   = cv.FONT_HERSHEY_SIMPLEX
         encontrados = 0
+        detectados_arr =  []
         for i in range(faces.shape[2]):
             confidence = faces[0, 0, i, 2]
             if confidence > 0.6:
@@ -54,16 +55,23 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
                 
                 cv.circle(img, center_coordinates_detected, 5, (255,255,0), 2)
                 
-                cv.rectangle(img,(x,y),(x1, y1),(255,0,0),2)
+                cv.rectangle(img,(x,y),(x1, y1),(255,0,0),1)
+                detectados_arr.append([math.dist([x,y], [x1,y1]),x,y,x1,y1,diff_X,diff_Y])
+                #cv.line(img,(x,y),(x1, y1), (0, 255, 0), thickness=2)
                 
-                self.determina_target(diff_X, diff_Y)
+                #self.determina_target(diff_X, diff_Y)
 
             # eyes = self.eye_classifier.detectMultiScale(roi_gray)
             # for (ex,ey,ew,eh) in eyes:
             #     cv.rectangle(roi_color,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
         if encontrados == 0:
             self.nao_encontrado()
+        else:
+            maior_enquadro = BluetoothArduinoCommunication.calcula_maior_quadrado(detectados_arr)
+            self.determina_target(maior_enquadro[5], maior_enquadro[6])
+            cv.rectangle(img,(maior_enquadro[1],maior_enquadro[2]),(maior_enquadro[3], maior_enquadro[4]),(100,120,0),2)
         return img
+
     @staticmethod
     def createCascadeClassifier_face():
         #return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_upperbody.xml')
