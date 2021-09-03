@@ -41,3 +41,5 @@ Step 2: Making OpenCV with Visual Studio
     On the panel at the right-hand side, expand Cmake Targets.
     Right-click on ALL_BUILD and click on build.
     Once done, right-click on Install and click on build.
+
+No windows, só consegui fazer funcionar com o anaconda =(
