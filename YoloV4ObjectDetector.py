@@ -23,6 +23,9 @@ class ObjectDetector:
         self.net.setInputSize(416, 416)
         self.net.setInputScale(1.0/255.0)
         self.net.setInputSwapRB(True)
+        #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
+        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         
     @staticmethod
     def createImageFromPath(imagePath):

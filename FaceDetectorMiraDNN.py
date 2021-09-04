@@ -75,10 +75,10 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
     @staticmethod
     def createCascadeClassifier_face():
         #return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_upperbody.xml')
-        return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
-        #return cv.CascadeClassifier("lib\haarcascades\haarcascade_frontalface_default.xml")
+        #return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        return cv.CascadeClassifier("lib\haarcascades\haarcascade_frontalface_default.xml")
 
     @staticmethod
     def createCascadeClassifier_olhos():
-        return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_eye.xml')
-        #return cv.CascadeClassifier("lib\haarcascades\haarcascade_eye.xml")
+        #return cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_eye.xml')
+        return cv.CascadeClassifier("lib\haarcascades\haarcascade_eye.xml")

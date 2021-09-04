@@ -5,14 +5,18 @@ import os
 import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 
-yolo_path = "yolo/yolov4tiny"
+yolo_path = "yolo/yolov4optimal"
 
 labelsPath = os.path.sep.join([yolo_path, "coco.names"])
 weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
 configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
 
 
-allowed_classes = ['person']
+allowed_classes = ['person',"cat",
+"dog",
+"horse",
+"bicycle",
+"motorbike"]
 
 class ObjectDetector(BluetoothArduinoCommunication):
 
@@ -65,6 +69,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         color_image_center = (0, 255, 0)
         cv2.circle(image, image_center, 5, color_image_center, 2)
         classes, confidences, boxes = self.net.detect(image, confThreshold=self.confidence_thresold, nmsThreshold=self.thresold)
+        print("Detectado")
         if len(boxes) == 0:
             self.nao_encontrado()
         else:
@@ -93,6 +98,8 @@ class ObjectDetector(BluetoothArduinoCommunication):
             if maior_enquadro and len(maior_enquadro)>0:
                 self.determina_target(maior_enquadro[5], maior_enquadro[6])
                 cv2.rectangle(image,maior_enquadro[7],(100,120,0),2)
+            else:
+                self.nao_encontrado()
         return image
 
     

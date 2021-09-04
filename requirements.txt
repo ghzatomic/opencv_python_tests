@@ -5,7 +5,7 @@ pyserial
 imutils
 #numpy==1.20.2
 #opencv-python==4.5.1.48
-yolov5
+#yolov5
 
 # sudo apt-get install lzma
 
@@ -14,3 +14,5 @@ yolov5
 # ./configure --enable-optimizations
 # sudo make
 # sudo make altinstall
+
+#pip install git+https://github.com/pybluez/pybluez@master

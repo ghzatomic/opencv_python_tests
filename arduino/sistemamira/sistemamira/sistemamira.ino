@@ -20,7 +20,7 @@ const bool usedriver_x = false;
 const bool useBluetooth = false;
 
 const int servoXStartRestPosition   = 1500;  //Starting position X
-const int servoYStartRestPosition   = 1500;  //Starting position Y
+const int servoYStartRestPosition   = 1400;  //Starting position Y
 
 const int servoXMaxPos   = 2000;
 const int servoXMinPos   = 1000;

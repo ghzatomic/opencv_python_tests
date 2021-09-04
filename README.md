@@ -17,10 +17,17 @@ python darknet_generate_config.py
 Step 0: Prerequisites
 
     Download and install CUDA and cuDNN as explained here.
+    https://developer.nvidia.com/cuda-downloads
+    https://developer.nvidia.com/rdp/cudnn-download
     Download and install CmakeGUI from here.
+    https://cmake.org/
     Download and install Visual Studio Community Edition from here. Install with Desktop Development for C++ option.
+    https://visualstudio.microsoft.com/pt-br/thank-you-downloading-visual-studio/?sku=Community&rel=16
+
     Download OpenCV source from here.
+    https://github.com/opencv/opencv/archive/4.4.0.zip
     Download OpenCV contrib from here. Make sure the version matches with OpenCV.
+    https://github.com/opencv/opencv_contrib/archive/4.4.0.zip
     Extract OpenCV and OpenCV contrib zip files.
     Make an empty folder called build
 
@@ -42,4 +49,7 @@ Step 2: Making OpenCV with Visual Studio
     Right-click on ALL_BUILD and click on build.
     Once done, right-click on Install and click on build.
 
-No windows, só consegui fazer funcionar com o anaconda =(
+https://jordanbenge.medium.com/anaconda3-opencv-with-cuda-gpu-support-for-windows-10-e038569e228
+
+
+cmake --build D:\git\opencv\build --target install --config release

@@ -36,7 +36,7 @@ class BluetoothArduinoCommunication:
             self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             self.sock.connect((linvor_addr, port))
         else:
-            self.arduino = serial.Serial(port='COM4', baudrate=115200, timeout=None)
+            self.arduino = serial.Serial(port='COM5', baudrate=115200, timeout=0)
 
         print("Connected")
         self.send_reset()
@@ -49,6 +49,9 @@ class BluetoothArduinoCommunication:
                 if self.bluetooth:
                     self.sock.send(message.encode())
                 else:
+                    self.arduino.flush()
+                    self.arduino.reset_input_buffer()
+                    self.arduino.reset_output_buffer()
                     self.arduino.write(message.encode())
                     self.arduino.flush()
                     self.arduino.reset_input_buffer()
