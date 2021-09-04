@@ -4,11 +4,14 @@ import serial
 class BluetoothArduinoCommunication:
     def __init__(self, connect=True):
         self.connected = False
-        self.fire_threshold = 20
+        self.fire_threshold = 10
         self.pos_threshold = 20
         self.connect = connect
         self.posX = 1500
+        self.inicial_y_pos = 1200
+        self.posY = self.inicial_y_pos
         self.send_direita_pos = True
+        self.send_cima_pos = True
         self.bluetooth=False
         self.xMaxPos = 2000
         self.xMinPos = 1000
@@ -63,13 +66,20 @@ class BluetoothArduinoCommunication:
     
     def send_sobe(self, vel):
         vel = str(vel)
-        #print("SOBE !")
-        self.send_message(vel+"00000|")
+        print("SOBE !")
+        nextPosY = self.posY + self.vel_multi(vel)
+        if nextPosY <= self.yMaxPos:
+            self.posY = nextPosY
+        self.send_message("0"+vel+"0000|")
     
     def send_desce(self, vel):
         vel = str(vel)
-        #print("DESCE !")
-        self.send_message("0"+vel+"0000|")
+        nextPosY = self.posY - self.vel_multi(vel)
+        if nextPosY >= self.yMinPos:
+            self.posY = nextPosY
+        print("DESCE !")
+        self.send_message(vel+"00000|")
+        
     
     def send_direita(self, vel):
         vel = str(vel)
@@ -92,7 +102,7 @@ class BluetoothArduinoCommunication:
         self.send_message("000010|")
 
     def scan(self):
-        print(self.posX)
+        print(self.posY)
         if self.posX <=self.xMinPos :
             self.send_direita_pos = False
         elif self.posX >=self.xMaxPos:
@@ -101,6 +111,13 @@ class BluetoothArduinoCommunication:
             self.send_direita(2)
         else:
             self.send_esquerda(2)
+
+        meio = self.inicial_y_pos
+        print(meio)
+        if self.posY > meio:
+            self.send_desce(2)
+        elif self.posY < meio:
+            self.send_sobe(2)
     
     def send_reset(self):
         print("RESET !")
@@ -119,10 +136,10 @@ class BluetoothArduinoCommunication:
             
         if (diff_Y < 0) and abs(diff_Y) > self.pos_threshold:
             if not self.in_target:
-                self.send_sobe(self.determina_velocidade(diff_Y))
+                self.send_desce(self.determina_velocidade(diff_Y))
         elif abs(diff_Y) > self.pos_threshold:
             if not self.in_target:
-                self.send_desce(self.determina_velocidade(diff_Y))
+                self.send_sobe(self.determina_velocidade(diff_Y))
         if (diff_X > 0) and abs(diff_X) > self.pos_threshold:
             if not self.in_target:
                 self.send_direita(self.determina_velocidade(diff_X))

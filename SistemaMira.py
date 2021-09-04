@@ -14,6 +14,8 @@ configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
 
 allowed_classes = ['person',"cat",
 "dog",
+"car;",
+"bird",
 "horse",
 "bicycle",
 "motorbike"]
