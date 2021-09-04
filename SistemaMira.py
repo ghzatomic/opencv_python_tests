@@ -68,8 +68,9 @@ class ObjectDetector(BluetoothArduinoCommunication):
         image_center = (int(W/2) , int(H/2))
         color_image_center = (0, 255, 0)
         cv2.circle(image, image_center, 5, color_image_center, 2)
+        start_time = time.time()
         classes, confidences, boxes = self.net.detect(image, confThreshold=self.confidence_thresold, nmsThreshold=self.thresold)
-        print("Detectado")
+        print("--- %s seconds ---" % (time.time() - start_time))
         if len(boxes) == 0:
             self.nao_encontrado()
         else:

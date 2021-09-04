@@ -24,7 +24,7 @@ def obj_detector_func(img):
     return object_detector.detectaImagemCV2(img)
 
 def main():
-    video_utils.videoCapture(detector_pessoa_func)
+    video_utils.videoCapture(face_detector_func)
 
 def image_test():
     face_detector.detectaImagem(image_path)

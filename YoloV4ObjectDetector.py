@@ -19,13 +19,15 @@ class ObjectDetector:
         np.random.seed(42)
         self.COLORS = np.random.randint(0, 255, size=(len(self.LABELS), 3),
             dtype="uint8")
+        self.use_cuda = True
         self.net = cv2.dnn_DetectionModel(configPath, weightsPath)
         self.net.setInputSize(416, 416)
         self.net.setInputScale(1.0/255.0)
         self.net.setInputSwapRB(True)
-        #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
-        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+        if self.use_cuda:
+            #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
+            self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+            self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         
     @staticmethod
     def createImageFromPath(imagePath):
