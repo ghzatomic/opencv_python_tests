@@ -4,7 +4,7 @@ import serial
 class BluetoothArduinoCommunication:
     def __init__(self, connect=True):
         self.connected = False
-        self.fire_threshold = 10
+        self.fire_threshold = 5
         self.pos_threshold = 20
         self.connect = connect
         self.posX = 1500
@@ -17,6 +17,15 @@ class BluetoothArduinoCommunication:
         self.xMinPos = 1000
         self.yMaxPos = 2000
         self.yMinPos = 1000
+        self.use_angulo = False
+        self.use_angulo_data = "1" if self.use_angulo else "0"
+
+        self.sig_map_sobe = "1"
+        self.sig_map_desce = "0"
+        self.sig_map_direita = "2"
+        self.sig_map_esquerda = "3"
+        self.sig_map_atira = "4"
+        self.sig_map_reset = "5"
                 
     def do_connect(self):
         if not self.connect:
@@ -47,6 +56,7 @@ class BluetoothArduinoCommunication:
         return self.connected
 
     def send_message(self, message):
+        print("Enviando : ", message)
         if self.connected:
             try:
                 if self.bluetooth:
@@ -56,6 +66,7 @@ class BluetoothArduinoCommunication:
                     self.arduino.reset_input_buffer()
                     self.arduino.reset_output_buffer()
                     self.arduino.write(message.encode())
+                    #print("Recebido - ", self.arduino.readline())
                     self.arduino.flush()
                     self.arduino.reset_input_buffer()
                     self.arduino.reset_output_buffer()
@@ -66,46 +77,60 @@ class BluetoothArduinoCommunication:
     
     def send_sobe(self, vel):
         vel = str(vel)
-        print("SOBE !")
-        nextPosY = self.posY + self.vel_multi(vel)
+        multi = self.vel_multi(vel)
+        nextPosY = self.posY + multi
         if nextPosY <= self.yMaxPos:
             self.posY = nextPosY
-        self.send_message("0"+vel+"0000|")
+        data_send = self.posY if self.use_angulo else vel
+        print("SOBE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
+        self.send_message(self.sig_map_sobe+self.use_angulo_data+str(data_send)+"|")
+        #self.send_message("0"+str(data_send)+"0000"+self.use_angulo_data+"|")
     
     def send_desce(self, vel):
         vel = str(vel)
-        nextPosY = self.posY - self.vel_multi(vel)
+        multi = self.vel_multi(vel)
+        nextPosY = self.posY - multi
         if nextPosY >= self.yMinPos:
             self.posY = nextPosY
-        print("DESCE !")
-        self.send_message(vel+"00000|")
+        data_send = self.posY if self.use_angulo else vel
+        print("DESCE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
+        self.send_message(self.sig_map_desce+self.use_angulo_data+str(data_send)+"|")
+        #self.send_message(str(data_send)+"00000"+self.use_angulo_data+"|")
         
     
     def send_direita(self, vel):
         vel = str(vel)
-        #print("DIREITA !")
-        nextPosX = self.posX - self.vel_multi(vel)
+        multi = self.vel_multi(vel)
+        nextPosX = self.posX - multi
         if nextPosX >= self.xMinPos:
             self.posX = nextPosX
-        self.send_message("00"+vel+"000|")
+        data_send = self.posX if self.use_angulo else vel
+        print("DIREITA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
+        self.send_message(self.sig_map_direita+self.use_angulo_data+str(data_send)+"|")
+        #self.send_message("00"+str(data_send)+"000"+self.use_angulo_data+"|")
     
     def send_esquerda(self, vel):
         vel = str(vel)
-        nextPosX = self.posX + self.vel_multi(vel)
+        multi = self.vel_multi(vel)
+        nextPosX = self.posX + multi
         if nextPosX <= self.xMaxPos:
             self.posX = nextPosX
-        #print("ESQUERDA !")
-        self.send_message("000"+vel+"00|")
+        data_send = self.posY if self.use_angulo else vel
+        print("ESQUERDA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
+        self.send_message(self.sig_map_esquerda+self.use_angulo_data+str(data_send)+"|")
+        #self.send_message("000"+str(data_send)+"00"+self.use_angulo_data+"|")
     
     def send_atira(self):
         #print("ENQUADROU !")
-        self.send_message("000010|")
+        data_send = 0 if self.use_angulo else 0
+        self.send_message(self.sig_map_atira+self.use_angulo_data+str(data_send)+"|")
+        #self.send_message("000010"+self.use_angulo_data+"|")
 
     def scan(self):
-        print(self.posY)
-        if self.posX <=self.xMinPos :
+        print(self.posX)
+        if self.posX - 10 <=self.xMinPos :
             self.send_direita_pos = False
-        elif self.posX >=self.xMaxPos:
+        elif self.posX + 10 >=self.xMaxPos:
             self.send_direita_pos = True
         if self.send_direita_pos:
             self.send_direita(2)
@@ -113,7 +138,7 @@ class BluetoothArduinoCommunication:
             self.send_esquerda(2)
 
         meio = self.inicial_y_pos
-        print(meio)
+        #print(meio)
         if self.posY > meio:
             self.send_desce(2)
         elif self.posY < meio:
@@ -121,7 +146,7 @@ class BluetoothArduinoCommunication:
     
     def send_reset(self):
         print("RESET !")
-        self.send_message("000001|")
+        self.send_message(self.sig_map_reset+"|")
     
     def nao_encontrado(self):
         self.scan()
@@ -160,12 +185,14 @@ class BluetoothArduinoCommunication:
             return 1
         #return 1
     def vel_multi(self, vel):
-        if vel == "3":
-            return 15
+        if vel == "1":
+            return 1
         elif vel == "2":
             return 5
+        elif vel == "3":
+            return 15
         else:
-            return 1
+            return int(2*int(vel))
         #return 1
 
     @staticmethod

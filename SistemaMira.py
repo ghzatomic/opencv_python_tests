@@ -24,7 +24,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
 
     def __init__(self, connect_bt=False):
         BluetoothArduinoCommunication.__init__(self, connect=connect_bt)
-        self.confidence_thresold = 0.3
+        self.confidence_thresold = 0.4
         self.thresold = 0.2
         self.LABELS = open(labelsPath).read().strip().split("\n")
         # initialize a list of colors to represent each possible class label
@@ -72,7 +72,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         cv2.circle(image, image_center, 5, color_image_center, 2)
         start_time = time.time()
         classes, confidences, boxes = self.net.detect(image, confThreshold=self.confidence_thresold, nmsThreshold=self.thresold)
-        print("--- %s seconds ---" % (time.time() - start_time))
+        #print("--- %s seconds ---" % (time.time() - start_time))
         if len(boxes) == 0:
             self.nao_encontrado()
         else:

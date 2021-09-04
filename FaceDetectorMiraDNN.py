@@ -40,7 +40,7 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         net.setInput(blob)
         faces = net.forward()
         end = time.time()
-        print("[INFO] {:.6f} seconds".format(end - start))
+        #print("[INFO] {:.6f} seconds".format(end - start))
         cv.circle(img, image_center, 5, color_image_center, 2)
         font                   = cv.FONT_HERSHEY_SIMPLEX
         encontrados = 0

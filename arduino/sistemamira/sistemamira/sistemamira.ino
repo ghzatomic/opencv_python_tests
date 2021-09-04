@@ -17,6 +17,8 @@
 
 const bool usedriver_x = false;
 
+bool move_angulo = false;
+
 const bool useBluetooth = false;
 
 const int servoXStartRestPosition   = 1500;  //Starting position X
@@ -80,38 +82,59 @@ void setup() {
 String comando = "";
 
 void comandoEncontrado(String comando){
-  Serial.println(comando);
-  if (comando[0] != '0'){
-    moveY(false, charToInt(comando[0]));
+  Serial.print(comando);
+  if (comando[0] == '0'){
+    char comando_datatype = comando[1];
+    move_angulo = comando_datatype == '0' ? false : true;
+    comando = comando.substring(2,sizeof(comando));
+    moveY(false, comando.toInt());
+    //Serial.println(comando);
     //Serial.println("SOBE");
-  }
-  if (comando[1] != '0'){
-    moveY(true, charToInt(comando[1]));
+  }else if (comando[0] == '1'){
+    char comando_datatype = comando[1];
+    move_angulo = comando_datatype == '0' ? false : true;
+    comando = comando.substring(2,sizeof(comando));
+    //charToInt(comando)
+    //Serial.println(comando);
+    moveY(true, comando.toInt());
     //Serial.println("DESCE");
-  }
-  if (comando[2] != '0'){
+  }else if (comando[0] == '2'){
     if (!usedriver_x){
-      moveX(false, charToInt(comando[2]));
+      Serial.print(" - ");
+      Serial.print(comando);
+      Serial.print("  -  ");
+      char comando_datatype = comando[1];
+      move_angulo = comando_datatype == '0' ? false : true;
+      comando = comando.substring(2,sizeof(comando));
+      //charToInt(comando);
+      Serial.println(comando);
+      moveX(false, comando.toInt());
     }else{
       moveX_driver(false);
     }
     //Serial.println("DIREITA");
-  }
-  if (comando[3] != '0'){
+  }else if (comando[0] == '3'){
     if (!usedriver_x){
-      moveX(true, charToInt(comando[3]));
+      Serial.print(" - ");
+      Serial.print(comando);
+      Serial.print("  -  ");
+      char comando_datatype = comando[1];
+      move_angulo = comando_datatype == '0' ? false : true;
+      comando = comando.substring(2,sizeof(comando));   
+      Serial.println(comando);
+      //moveX(true, charToInt(comando));
+      moveX(true, comando.toInt());
     }else{
       moveX_driver(true);
     }
     //Serial.println("ESQUERDA");
-  }
-  if (comando[4] != '0'){
+  }else if (comando[0] == '4'){
     atira();
+    //Serial.println(comando);
     //Serial.println("ATIRA");
-  }
-  if (comando[5] != '0'){
+  }else if (comando[0] == '5'){
+    //Serial.println(comando);
     reset();
-    //Serial.println("ATIRA");
   }
 }
 
@@ -136,7 +159,7 @@ int charToInt(char c){
 
 void atira(){
   digitalWrite(TRIGGER_FIRE, HIGH);
-  delay(100);
+  delay(50);
   digitalWrite(TRIGGER_FIRE, LOW);
 }
 
@@ -146,8 +169,10 @@ int multiplicador_vel_servo(int forca){
     return 15;
   }else if (forca == 2){
     return 5;
-  }else{
+  }else if (forca == 1){
     return 1;
+  }else{
+    return (int)2*forca;
   }
 }
 
@@ -178,21 +203,31 @@ void moveX_driver(bool direita){
   }
 }
 
-void moveX(bool direita, int forca){
-  if(direita){
-    posX += multiplicador_vel_servo(forca);    
+void moveX(bool direita, int forca_ou_angulo){
+  if (!move_angulo){
+    if(direita){
+      posX += multiplicador_vel_servo(forca_ou_angulo);    
+    }else{
+      posX -= multiplicador_vel_servo(forca_ou_angulo);   
+    }
   }else{
-    posX -= multiplicador_vel_servo(forca);   
+    posX = forca_ou_angulo;
+    //servo_X.writeMicroseconds(posX);
   }
   //Serial.print("Servo X: ");
   //Serial.println(posX);
 }
 
-void moveY(bool cima, int forca){
-  if(cima){
-    posY += multiplicador_vel_servo(forca);    
+void moveY(bool cima, int forca_ou_angulo){
+  if (!move_angulo){
+    if(cima){
+      posY += multiplicador_vel_servo(forca_ou_angulo);    
+    }else{
+      posY -= multiplicador_vel_servo(forca_ou_angulo);   
+    }
   }else{
-    posY -= multiplicador_vel_servo(forca);   
+    posY = forca_ou_angulo;
+    //servo_Y.writeMicroseconds(posY);
   }
   //Serial.print("Servo Y: ");
   //Serial.println(posY);
@@ -200,8 +235,6 @@ void moveY(bool cima, int forca){
 
 void update_servos(){
   controla_posicoes_limites();
-  //servo_Y.attach(servo_pinY); // start servo control
-  //servo_X.attach(servo_pinX); // start servo control
   if (!usedriver_x){
     if (last_posX != posX){
       servo_X.writeMicroseconds(posX);  
@@ -230,9 +263,9 @@ void loop() {
     }else{
       character = Serial.read();//;
     }
-    Serial.println(character);
+    //Serial.println(character);
     if (character == '|'){
-      Serial.println(comando);
+      //Serial.println(comando);
       comandoEncontrado(comando);
       comando = "";        
     }else{
