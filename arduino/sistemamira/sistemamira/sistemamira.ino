@@ -22,7 +22,7 @@ bool move_angulo = false;
 const bool useBluetooth = false;
 
 const int servoXStartRestPosition   = 1500;  //Starting position X
-const int servoYStartRestPosition   = 1200;  //Starting position Y
+const int servoYStartRestPosition   = 1600;  //Starting position Y
 
 const int servoXMaxPos   = 2000;
 const int servoXMinPos   = 1000;
@@ -82,7 +82,7 @@ void setup() {
 String comando = "";
 
 void comandoEncontrado(String comando){
-  Serial.print(comando);
+  //Serial.print(comando);
   if (comando[0] == '0'){
     char comando_datatype = comando[1];
     move_angulo = comando_datatype == '0' ? false : true;
@@ -100,14 +100,14 @@ void comandoEncontrado(String comando){
     //Serial.println("DESCE");
   }else if (comando[0] == '2'){
     if (!usedriver_x){
-      Serial.print(" - ");
-      Serial.print(comando);
-      Serial.print("  -  ");
+      //Serial.print(" - ");
+      //Serial.print(comando);
+      //Serial.print("  -  ");
       char comando_datatype = comando[1];
       move_angulo = comando_datatype == '0' ? false : true;
       comando = comando.substring(2,sizeof(comando));
       //charToInt(comando);
-      Serial.println(comando);
+      //Serial.println(comando);
       moveX(false, comando.toInt());
     }else{
       moveX_driver(false);
@@ -115,13 +115,13 @@ void comandoEncontrado(String comando){
     //Serial.println("DIREITA");
   }else if (comando[0] == '3'){
     if (!usedriver_x){
-      Serial.print(" - ");
-      Serial.print(comando);
-      Serial.print("  -  ");
+      //Serial.print(" - ");
+      //Serial.print(comando);
+      //Serial.print("  -  ");
       char comando_datatype = comando[1];
       move_angulo = comando_datatype == '0' ? false : true;
       comando = comando.substring(2,sizeof(comando));   
-      Serial.println(comando);
+      //Serial.println(comando);
       //moveX(true, charToInt(comando));
       moveX(true, comando.toInt());
     }else{
