@@ -5,7 +5,7 @@ import os
 import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
 
-yolo_path = "yolo/yolov4optimal"
+yolo_path = "yolo/yolov4tiny"
 
 labelsPath = os.path.sep.join([yolo_path, "coco.names"])
 weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])

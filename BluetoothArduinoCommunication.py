@@ -4,8 +4,8 @@ import serial
 class BluetoothArduinoCommunication:
     def __init__(self, connect=True):
         self.connected = False
-        self.fire_threshold = 5
-        self.pos_threshold = 20
+        self.fire_threshold = 20
+        self.pos_threshold = 10
         self.connect = connect
         self.posX = 1500
         self.inicial_y_pos = 1200
@@ -48,7 +48,7 @@ class BluetoothArduinoCommunication:
             self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
             self.sock.connect((linvor_addr, port))
         else:
-            self.arduino = serial.Serial(port='COM5', baudrate=115200, timeout=0)
+            self.arduino = serial.Serial(port='/dev/ttyUSB0', baudrate=115200, timeout=0)
 
         print("Connected")
         self.send_reset()
@@ -82,7 +82,7 @@ class BluetoothArduinoCommunication:
         if nextPosY <= self.yMaxPos:
             self.posY = nextPosY
         data_send = self.posY if self.use_angulo else vel
-        print("SOBE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
+        #print("SOBE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
         self.send_message(self.sig_map_sobe+self.use_angulo_data+str(data_send)+"|")
         #self.send_message("0"+str(data_send)+"0000"+self.use_angulo_data+"|")
     
@@ -93,7 +93,7 @@ class BluetoothArduinoCommunication:
         if nextPosY >= self.yMinPos:
             self.posY = nextPosY
         data_send = self.posY if self.use_angulo else vel
-        print("DESCE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
+        #print("DESCE - ", vel , " - ", multi, " - ", nextPosY, " - ", data_send)
         self.send_message(self.sig_map_desce+self.use_angulo_data+str(data_send)+"|")
         #self.send_message(str(data_send)+"00000"+self.use_angulo_data+"|")
         
@@ -105,7 +105,7 @@ class BluetoothArduinoCommunication:
         if nextPosX >= self.xMinPos:
             self.posX = nextPosX
         data_send = self.posX if self.use_angulo else vel
-        print("DIREITA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
+        #print("DIREITA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
         self.send_message(self.sig_map_direita+self.use_angulo_data+str(data_send)+"|")
         #self.send_message("00"+str(data_send)+"000"+self.use_angulo_data+"|")
     
@@ -116,12 +116,12 @@ class BluetoothArduinoCommunication:
         if nextPosX <= self.xMaxPos:
             self.posX = nextPosX
         data_send = self.posY if self.use_angulo else vel
-        print("ESQUERDA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
+        #print("ESQUERDA - ", vel , " - ", multi, " - ", nextPosX, " - ", data_send)
         self.send_message(self.sig_map_esquerda+self.use_angulo_data+str(data_send)+"|")
         #self.send_message("000"+str(data_send)+"00"+self.use_angulo_data+"|")
     
     def send_atira(self):
-        #print("ENQUADROU !")
+        print("ENQUADROU !")
         data_send = 0 if self.use_angulo else 0
         self.send_message(self.sig_map_atira+self.use_angulo_data+str(data_send)+"|")
         #self.send_message("000010"+self.use_angulo_data+"|")

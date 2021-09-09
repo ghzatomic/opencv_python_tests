@@ -13,15 +13,20 @@ class VideoUtils:
         while i > 0:
             cap = cv.VideoCapture(index)
             if cap.read()[0]:
-                arr.append(index)
+                width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+                height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+                
+                arr.append({"indice":index, "w":str(width), "h":str(height)})
                 cap.release()
             index += 1
             i -= 1
         return arr
 
     def videoCapture(self, videoTransformerFunction=None):
-        #print(self.returnCameraIndexes())
-        cap = cv.VideoCapture(1)
+        print(self.returnCameraIndexes())
+        cap = cv.VideoCapture(3, cv.CAP_ANY)
+        #cap.set(cv.CAP_PROP_FRAME_WIDTH, 800)
+        #cap.set(cv.CAP_PROP_FRAME_HEIGHT, 600)
         scale_percent = 60 # percent of original size
         while 1:
             ret, img = cap.read()
