@@ -20,6 +20,10 @@ class BluetoothArduinoCommunication:
         self.use_angulo = False
         self.use_angulo_data = "1" if self.use_angulo else "0"
 
+        self.achou_count_threshold = 4
+        self.achou_count = 0
+        self.nada_count = 0
+
         self.sig_map_sobe = "1"
         self.sig_map_desce = "0"
         self.sig_map_direita = "2"
@@ -149,9 +153,27 @@ class BluetoothArduinoCommunication:
         print("RESET !")
         self.send_message(self.sig_map_reset+"|")
     
+    def encontrado(self):
+        self.achou_count += 1
+        if self.nada_count >= 0:
+            self.nada_count -= 1
+        self.trigger_verifica_enquadro_persistente()
+
     def nao_encontrado(self):
+        self.nada_count += 1
+        if self.achou_count >= 0:
+            self.achou_count -= 1
+        self.trigger_verifica_enquadro_persistente()
         self.scan()
         
+    def trigger_verifica_enquadro_persistente(self):
+        if self.achou_count >= self.achou_count_threshold:
+            self.nada_count = 0
+            self.enquadro_persistente()
+            
+    def enquadro_persistente(self):
+        print("Enquadro Persistente !")
+
     def determina_target(self, diff_X, diff_Y):
         #print("[INFO] X : {:.6f}, Y : {:.6f}".format(diff_X, diff_Y))
         if abs(diff_Y) < self.fire_threshold and abs(diff_X) < self.fire_threshold:

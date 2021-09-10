@@ -76,6 +76,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         if len(boxes) == 0:
             self.nao_encontrado()
         else:
+            self.encontrado()
             detectados_arr = []
             for classID, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
                 if self.LABELS[classID] not in allowed_classes:
