@@ -7,29 +7,32 @@ from HumanoMira import HumanoMira
 
 connect = True
 camera_index = 3 #Linux Camera
-#camera_index = 1 ## Windows com a camera
-print_cameras_disponiveis = True
+camera_index = 0 ## Windows com a camera
+print_cameras_disponiveis = False
 
 video_encontrados_path = None#"/Dados/public/videos/"
 
-yolo_path = "yolo/yolov4tiny"
-#yolo_path = "yolo/yolov4optimal"
+#yolo_path = "yolo/yolov4tiny"
+yolo_path = "yolo/yolov4optimal"
 
 serial_port = '/dev/ttyUSB0' # Linux
-#serial_port = 'COM4' # Windows
+serial_port = 'COM6' # Windows
 
-ativa_laser = True
+use_dshow = True
+
+ativa_laser = False
 
 allowed_classes = ['person',"cat",
 "dog",
-"car;",
+#"car;",
 "bird",
 "horse",
 "bicycle",
-"motorbike"]
+#"motorbike"
+]
 
 face_detector = FaceDetectorMira(connect, serial_port=serial_port, video_encontrados_path=video_encontrados_path, ativa_laser=ativa_laser)
-detector_pessoa = MiraYolov4(connect, allowed_classes= ['person'], serial_port=serial_port, yolo_path=yolo_path, video_encontrados_path=video_encontrados_path, ativa_laser=ativa_laser)
+detector_pessoa = MiraYolov4(connect, allowed_classes= allowed_classes, serial_port=serial_port, yolo_path=yolo_path, video_encontrados_path=video_encontrados_path, ativa_laser=ativa_laser)
 object_detector = ObjectDetector()
 video_utils = VideoUtils()
 
@@ -45,7 +48,7 @@ def obj_detector_func(img):
     return object_detector.detectaImagemCV2(img)
 
 def main():
-    video_utils.videoCapture(camera_index, videoTransformerFunction=face_detector_func, print_cameras_disponiveis=print_cameras_disponiveis)
+    video_utils.videoCapture(camera_index, videoTransformerFunction=detector_pessoa_func, print_cameras_disponiveis=print_cameras_disponiveis, use_dshow=use_dshow)
 
 def image_test():
     face_detector.detectaImagem(image_path)

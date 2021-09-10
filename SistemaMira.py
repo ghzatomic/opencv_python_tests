@@ -79,11 +79,8 @@ class ObjectDetector(BluetoothArduinoCommunication, Gravavel):
         else:
             detectados_arr = []
             for classID, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
-                if self.LABELS[classID] not in self.allowed_classes:
-                    continue
+                
                 if confidence > self.confidence_thresold:
-                    color = (255, 0, 0)
-                    self.encontrado()
                     (x, y) = (box[0], box[1])
                     (w, h) = (box[2], box[3])
                     
@@ -92,11 +89,13 @@ class ObjectDetector(BluetoothArduinoCommunication, Gravavel):
                     diff_X = image_center[0] - center_coordinates_detected[0]
                     diff_Y = image_center[1] - center_coordinates_detected[1]
                     
-                    cv2.circle(image, center_coordinates_detected, 5, (255,255,0), 2)
-                    
-                    cv2.circle(image, center_coordinates_detected, 5, color_image_center, 2)
                     cv2.rectangle(image, box, color_image_center, 1)
-                    detectados_arr.append([w*h,x,y,w,h,diff_X,diff_Y, box])
+                    if self.LABELS[classID] in self.allowed_classes:
+                        cv2.circle(image, center_coordinates_detected, 5, (255,255,0), 1)
+                    
+                        cv2.circle(image, center_coordinates_detected, 5, color_image_center, 1)
+                        self.encontrado()
+                        detectados_arr.append([w*h,x,y,w,h,diff_X,diff_Y, box])
                     
             maior_enquadro = BluetoothArduinoCommunication.calcula_maior_quadrado(detectados_arr)
             if maior_enquadro and len(maior_enquadro)>0:

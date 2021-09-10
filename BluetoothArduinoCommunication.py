@@ -4,19 +4,25 @@ import serial
 class BluetoothArduinoCommunication:
     def __init__(self, connect=True, serial_port="COM4", ativa_laser=False):
         self.connected = False
-        self.fire_threshold = 5
-        self.pos_threshold = 5
+        self.fire_threshold = 6
+        self.pos_threshold = 2
         self.connect = connect
         self.posX = 1500
-        self.inicial_y_pos = 1200
-        self.posY = self.inicial_y_pos
+        self.inicial_y_pos = 1100
+        self.posY = 1500
         self.send_direita_pos = True
-        self.send_cima_pos = True
+        self.send_desce_pos = True
         self.bluetooth=False
-        self.xMaxPos = 2000
-        self.xMinPos = 1000
+        self.xMaxPos = 2100 # 2000
+        self.xMinPos = 1600 #1000
         self.yMaxPos = 2000
         self.yMinPos = 1000
+
+        self.usa_scan_vertical = True
+
+        self.balanco_y_max = 1130
+        self.balanco_y_min = 1000
+
         self.use_angulo = False
         self.use_angulo_data = "1" if self.use_angulo else "0"
         self.ativa_laser = ativa_laser
@@ -138,7 +144,7 @@ class BluetoothArduinoCommunication:
         #self.send_message("000010"+self.use_angulo_data+"|")
 
     def scan(self):
-        #print(self.posX)
+        print(self.posX, " - ", self.posY)
         if self.posX - 10 <=self.xMinPos :
             self.send_direita_pos = False
         elif self.posX + 10 >=self.xMaxPos:
@@ -148,12 +154,23 @@ class BluetoothArduinoCommunication:
         else:
             self.send_esquerda(2)
 
-        meio = self.inicial_y_pos
-        #print(meio)
-        if self.posY > meio:
-            self.send_desce(2)
-        elif self.posY < meio:
-            self.send_sobe(2)
+
+        if self.usa_scan_vertical:
+            if self.posY - 10 <=self.balanco_y_min :
+                self.send_desce_pos = False
+            elif self.posY + 10 >=self.balanco_y_max:
+                self.send_desce_pos = True
+            if self.send_desce_pos:
+                self.send_desce(2)
+            else:
+                self.send_sobe(2)
+        else:
+            meio = self.inicial_y_pos
+            #print(meio)
+            if self.posY > meio:
+                self.send_desce(2)
+            elif self.posY < meio:
+                self.send_sobe(2)
     
     def send_reset(self):
         print("RESET !")
