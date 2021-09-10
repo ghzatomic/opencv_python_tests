@@ -12,17 +12,9 @@ weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
 configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
 
 
-allowed_classes = ['person',"cat",
-"dog",
-"car;",
-"bird",
-"horse",
-"bicycle",
-"motorbike"]
-
 class ObjectDetector(BluetoothArduinoCommunication):
 
-    def __init__(self, connect_bt=False):
+    def __init__(self, connect_bt=False, allowed_classes = ['person']):
         BluetoothArduinoCommunication.__init__(self, connect=connect_bt)
         self.confidence_thresold = 0.4
         self.thresold = 0.2
@@ -34,6 +26,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         self.net = cv2.dnn_DetectionModel(configPath, weightsPath)
         self.net.setInputSize(416, 416)
         self.net.setInputScale(1.0/255.0)
+        self.allowed_classes = allowed_classes
         self.net.setInputSwapRB(True)
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
@@ -78,7 +71,7 @@ class ObjectDetector(BluetoothArduinoCommunication):
         else:
             detectados_arr = []
             for classID, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
-                if self.LABELS[classID] not in allowed_classes:
+                if self.LABELS[classID] not in self.allowed_classes:
                     continue
                 if confidence > self.confidence_thresold:
                     color = (255, 0, 0)
