@@ -11,6 +11,8 @@ python darknet_generate_config.py
 ./exec_treinamento_darknet.sh
 
 
+py -m pip install pipwin
+py -m pipwin install 
 
 
 

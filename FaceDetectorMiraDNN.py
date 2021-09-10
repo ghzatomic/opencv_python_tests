@@ -4,11 +4,13 @@ import time
 from time import sleep
 import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
+from Gravavel import Gravavel
 
-class FaceDetectorMira(BluetoothArduinoCommunication):
+class FaceDetectorMira(BluetoothArduinoCommunication, Gravavel):
 
-    def __init__(self, connect=False):
-        BluetoothArduinoCommunication.__init__(self, connect=connect)
+    def __init__(self, connect=False, serial_port="COM4", video_encontrados_path="/Dados/public/videos", ativa_laser=False):
+        BluetoothArduinoCommunication.__init__(self, connect=connect, serial_port=serial_port, ativa_laser=ativa_laser)
+        Gravavel.__init__(self, video_encontrados_path=video_encontrados_path)
         self.face_classifier = FaceDetectorMira.createCascadeClassifier_face()
         self.eye_classifier = FaceDetectorMira.createCascadeClassifier_olhos()
         self.use_cuda = True
@@ -19,10 +21,20 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         for (x,y,w,h) in faces:
             cv.rectangle(image, (x,y), (x+w, y+h), (255,0,0), 2)
         return image
+    
+    def enquadro_persistente(self):
+        super().enquadro_persistente()
+        self.grava(self.image)
+        
+    def zero_enquadro(self):
+        super().zero_enquadro()
+        self.para_gravacao()
 
     def detectaFace2(self,img):
         if not self.connected:
             self.do_connect()
+            
+        self.image = img
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
         gray = cv.GaussianBlur(gray, (5, 5), 0)
         (H, W) = img.shape[:2]
@@ -71,6 +83,7 @@ class FaceDetectorMira(BluetoothArduinoCommunication):
         if encontrados == 0:
             self.nao_encontrado()
         else:
+            self.encontrado()
             maior_enquadro = BluetoothArduinoCommunication.calcula_maior_quadrado(detectados_arr)
             self.determina_target(maior_enquadro[5], maior_enquadro[6])
             cv.rectangle(img,(maior_enquadro[1],maior_enquadro[2]),(maior_enquadro[3], maior_enquadro[4]),(100,120,0),2)

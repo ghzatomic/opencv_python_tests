@@ -4,18 +4,16 @@ import time
 import os
 import math
 from BluetoothArduinoCommunication import BluetoothArduinoCommunication
+from Gravavel import Gravavel
 
-yolo_path = "yolo/yolov4optimal"
+class ObjectDetector(BluetoothArduinoCommunication, Gravavel):
 
-labelsPath = os.path.sep.join([yolo_path, "coco.names"])
-weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
-configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
-
-
-class ObjectDetector(BluetoothArduinoCommunication):
-
-    def __init__(self, connect_bt=False, allowed_classes = ['person']):
-        BluetoothArduinoCommunication.__init__(self, connect=connect_bt)
+    def __init__(self, connect_bt=False, allowed_classes = ['person'], serial_port="COM4", yolo_path = "yolo/yolov4optimal", video_encontrados_path="/Dados/public/videos", ativa_laser=False):
+        BluetoothArduinoCommunication.__init__(self, connect=connect_bt, serial_port=serial_port, ativa_laser=ativa_laser)
+        Gravavel.__init__(self, video_encontrados_path=video_encontrados_path)
+        labelsPath = os.path.sep.join([yolo_path, "coco.names"])
+        weightsPath = os.path.sep.join([yolo_path, "yolov4.weights"])
+        configPath = os.path.sep.join([yolo_path, "yolov4.cfg"])
         self.confidence_thresold = 0.4
         self.thresold = 0.2
         self.LABELS = open(labelsPath).read().strip().split("\n")
@@ -55,7 +53,17 @@ class ObjectDetector(BluetoothArduinoCommunication):
             
         return image
 
+    def enquadro_persistente(self):
+        super().enquadro_persistente()
+        self.grava(self.image)
+        
+    def zero_enquadro(self):
+        super().zero_enquadro()
+        self.para_gravacao()
+        
+
     def detectaImagemCV2(self, image):
+        self.image = image
         if not self.connected:
             self.do_connect()
         self.in_target = False
@@ -69,14 +77,13 @@ class ObjectDetector(BluetoothArduinoCommunication):
         if len(boxes) == 0:
             self.nao_encontrado()
         else:
-            self.encontrado()
             detectados_arr = []
             for classID, confidence, box in zip(classes.flatten(), confidences.flatten(), boxes):
                 if self.LABELS[classID] not in self.allowed_classes:
                     continue
                 if confidence > self.confidence_thresold:
                     color = (255, 0, 0)
-                    
+                    self.encontrado()
                     (x, y) = (box[0], box[1])
                     (w, h) = (box[2], box[3])
                     

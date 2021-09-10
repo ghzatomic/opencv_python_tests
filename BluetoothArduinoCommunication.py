@@ -2,7 +2,7 @@ import bluetooth
 import serial
 
 class BluetoothArduinoCommunication:
-    def __init__(self, connect=True):
+    def __init__(self, connect=True, serial_port="COM4", ativa_laser=False):
         self.connected = False
         self.fire_threshold = 5
         self.pos_threshold = 5
@@ -19,10 +19,15 @@ class BluetoothArduinoCommunication:
         self.yMinPos = 1000
         self.use_angulo = False
         self.use_angulo_data = "1" if self.use_angulo else "0"
+        self.ativa_laser = ativa_laser
 
         self.achou_count_threshold = 4
+        self.nada_count_threshold = 4
+        
         self.achou_count = 0
         self.nada_count = 0
+
+        self.serial_port = serial_port
 
         self.sig_map_sobe = "1"
         self.sig_map_desce = "0"
@@ -53,7 +58,7 @@ class BluetoothArduinoCommunication:
             self.sock.connect((linvor_addr, port))
         else:
             #self.arduino = serial.Serial(port='/dev/ttyUSB0', baudrate=115200, timeout=0)
-            self.arduino = serial.Serial(port='COM4', baudrate=115200, timeout=0)
+            self.arduino = serial.Serial(port=self.serial_port, baudrate=115200, timeout=0)
 
         print("Connected")
         self.send_reset()
@@ -127,8 +132,9 @@ class BluetoothArduinoCommunication:
     
     def send_atira(self):
         print("ENQUADROU !")
-        data_send = 0 if self.use_angulo else 0
-        self.send_message(self.sig_map_atira+self.use_angulo_data+str(data_send)+"|")
+        if self.ativa_laser:
+            data_send = 0 if self.use_angulo else 0
+            self.send_message(self.sig_map_atira+self.use_angulo_data+str(data_send)+"|")
         #self.send_message("000010"+self.use_angulo_data+"|")
 
     def scan(self):
@@ -155,24 +161,37 @@ class BluetoothArduinoCommunication:
     
     def encontrado(self):
         self.achou_count += 1
-        if self.nada_count >= 0:
+        if self.nada_count > 0:
             self.nada_count -= 1
         self.trigger_verifica_enquadro_persistente()
 
+    def print_counts(self):
+        print(self.achou_count, " - ", self.nada_count)
+
     def nao_encontrado(self):
         self.nada_count += 1
-        if self.achou_count >= 0:
+        if self.achou_count > 0:
             self.achou_count -= 1
         self.trigger_verifica_enquadro_persistente()
-        self.scan()
         
     def trigger_verifica_enquadro_persistente(self):
+        #self.print_counts()
         if self.achou_count >= self.achou_count_threshold:
             self.nada_count = 0
+            self.achou_count = self.achou_count_threshold
             self.enquadro_persistente()
+        if self.nada_count >= self.nada_count_threshold:
+            self.achou_count = 0
+            self.nada_count = self.nada_count_threshold
+            self.zero_enquadro()
             
+    def zero_enquadro(self):
+        self.scan()
+        #print("zero_enquadro !")
+    
     def enquadro_persistente(self):
-        print("Enquadro Persistente !")
+        pass
+        #print("Enquadro Persistente !")
 
     def determina_target(self, diff_X, diff_Y):
         #print("[INFO] X : {:.6f}, Y : {:.6f}".format(diff_X, diff_Y))
