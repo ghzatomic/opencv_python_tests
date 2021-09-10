@@ -24,7 +24,8 @@ class VideoUtils:
 
     def videoCapture(self, videoTransformerFunction=None):
         print(self.returnCameraIndexes())
-        cap = cv.VideoCapture(3, cv.CAP_ANY)
+        #cap = cv.VideoCapture(3, cv.CAP_ANY)
+        cap = cv.VideoCapture(1, cv.CAP_ANY)
         #cap.set(cv.CAP_PROP_FRAME_WIDTH, 800)
         #cap.set(cv.CAP_PROP_FRAME_HEIGHT, 600)
         scale_percent = 60 # percent of original size

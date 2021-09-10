@@ -44,7 +44,7 @@ SoftwareSerial bthc05(BTHC05_PIN_RXD,BTHC05_PIN_TXD); // RX, TX // Lembrar de in
 void setup() {
   
   Serial.begin(115200);
-  Serial.setTimeout(1);
+  Serial.setTimeout(0);
   while (!Serial) ; // wait for serial port to connect. Needed for native USB
   Serial.println("start");
   if (useBluetooth){
