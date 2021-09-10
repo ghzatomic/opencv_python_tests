@@ -22,11 +22,12 @@ class VideoUtils:
             i -= 1
         return arr
 
-    def videoCapture(self, videoTransformerFunction=None):
-        print(self.returnCameraIndexes())
-        #cap = cv.VideoCapture(3, cv.CAP_ANY)
+    def videoCapture(self, index, videoTransformerFunction=None, print_cameras_disponiveis=True, use_dshow=False):
+        if print_cameras_disponiveis:
+            print(self.returnCameraIndexes())
+        cap = cv.VideoCapture(index, cv.CAP_DSHOW if use_dshow else cv.CAP_ANY)# Linux com camera
         #cap = cv.VideoCapture(1, cv.CAP_ANY)
-        cap = cv.VideoCapture(0, cv.CAP_DSHOW)# Windows com a camera
+        #cap = cv.VideoCapture(0, cv.CAP_DSHOW)# Windows com a camera
         #ret_val = cap.set(cv.CAP_PROP_ZOOM, 0x8004)
         cap.set(cv.CAP_PROP_FRAME_WIDTH, 800)
         cap.set(cv.CAP_PROP_FRAME_HEIGHT, 600)
