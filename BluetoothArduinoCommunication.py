@@ -4,8 +4,8 @@ import serial
 class BluetoothArduinoCommunication:
     def __init__(self, connect=True):
         self.connected = False
-        self.fire_threshold = 20
-        self.pos_threshold = 10
+        self.fire_threshold = 5
+        self.pos_threshold = 5
         self.connect = connect
         self.posX = 1500
         self.inicial_y_pos = 1200
@@ -57,7 +57,7 @@ class BluetoothArduinoCommunication:
         return self.connected
 
     def send_message(self, message):
-        print("Enviando : ", message)
+        #print("Enviando : ", message)
         if self.connected:
             try:
                 if self.bluetooth:
@@ -128,7 +128,7 @@ class BluetoothArduinoCommunication:
         #self.send_message("000010"+self.use_angulo_data+"|")
 
     def scan(self):
-        print(self.posX)
+        #print(self.posX)
         if self.posX - 10 <=self.xMinPos :
             self.send_direita_pos = False
         elif self.posX + 10 >=self.xMaxPos:
