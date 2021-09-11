@@ -14,6 +14,12 @@ class FaceDetectorMira(BluetoothArduinoCommunication, Gravavel):
         self.face_classifier = FaceDetectorMira.createCascadeClassifier_face()
         self.eye_classifier = FaceDetectorMira.createCascadeClassifier_olhos()
         self.use_cuda = True
+        modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"
+        configFile = "models/deploy.prototxt.txt"
+        self.net = cv.dnn.readNetFromCaffe(configFile, modelFile)
+        if self.use_cuda:
+            self.net.setPreferableBackend(cv.dnn.DNN_BACKEND_CUDA)
+            self.net.setPreferableTarget(cv.dnn.DNN_TARGET_CUDA)
 
     def detectaFaceImagem(self, image):
         image_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
@@ -42,15 +48,9 @@ class FaceDetectorMira(BluetoothArduinoCommunication, Gravavel):
         image_center = (int(W/2) , int(H/2))
         color_image_center = (0, 255, 0)
         start = time.time()
-        modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"
-        configFile = "models/deploy.prototxt.txt"
-        net = cv.dnn.readNetFromCaffe(configFile, modelFile)
-        if self.use_cuda:
-            net.setPreferableBackend(cv.dnn.DNN_BACKEND_CUDA)
-            net.setPreferableTarget(cv.dnn.DNN_TARGET_CUDA)
         blob = cv.dnn.blobFromImage(cv.resize(img, (300, 300)), 1.0,(300, 300), (104.0, 117.0, 123.0))
-        net.setInput(blob)
-        faces = net.forward()
+        self.net.setInput(blob)
+        faces = self.net.forward()
         end = time.time()
         #print("[INFO] {:.6f} seconds".format(end - start))
         cv.circle(img, image_center, 5, color_image_center, 2)

@@ -26,7 +26,7 @@ class ObjectDetector(BluetoothArduinoCommunication, Gravavel):
         self.net.setInputScale(1.0/255.0)
         self.allowed_classes = allowed_classes
         self.net.setInputSwapRB(True)
-        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
+        #self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV) 
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         

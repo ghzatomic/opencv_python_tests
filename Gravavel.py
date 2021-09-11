@@ -1,12 +1,14 @@
 import cv2
+from datetime import datetime
 
 class Gravavel:
     def __init__(self, video_encontrados_path="/Dados/public/videos"):
         self.out = None
         self.fourcc = cv2.VideoWriter_fourcc(*'MP4V')
+        #self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        #self.fourcc = cv2.VideoWriter_fourcc(*'MPEG')
         self.detection_count = 0
         self.video_encontrados_path = video_encontrados_path
-        self.tamanho = (640,480)
         
     def add_encontrado(self):
         self.detection_count += 1
@@ -15,7 +17,10 @@ class Gravavel:
         if self.out == None:
             self.add_encontrado()
             if self.video_encontrados_path:
-                self.out = cv2.VideoWriter(self.video_encontrados_path+'/output_'+str(self.detection_count)+'.mp4', self.fourcc, 20.0, self.tamanho)
+                now = datetime.now()
+                date_time = now.strftime("%m%d%Y%H%M%S")
+                size = image.shape[1], image.shape[0]
+                self.out = cv2.VideoWriter(self.video_encontrados_path+'/output'+date_time+'_'+str(self.detection_count)+'.mp4', self.fourcc, 60, size)
         if self.out:
             print("Gravando")
             self.out.write(image)

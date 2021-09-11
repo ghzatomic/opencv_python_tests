@@ -14,7 +14,7 @@ class BluetoothArduinoCommunication:
         self.send_desce_pos = True
         self.bluetooth=False
         self.xMaxPos = 2100 # 2000
-        self.xMinPos = 1600 #1000
+        self.xMinPos = 1550 #1000
         self.yMaxPos = 2000
         self.yMinPos = 1000
 
@@ -27,8 +27,8 @@ class BluetoothArduinoCommunication:
         self.use_angulo_data = "1" if self.use_angulo else "0"
         self.ativa_laser = ativa_laser
 
-        self.achou_count_threshold = 4
-        self.nada_count_threshold = 4
+        self.achou_count_threshold = 8
+        self.nada_count_threshold = 8
         
         self.achou_count = 0
         self.nada_count = 0
@@ -144,7 +144,7 @@ class BluetoothArduinoCommunication:
         #self.send_message("000010"+self.use_angulo_data+"|")
 
     def scan(self):
-        print(self.posX, " - ", self.posY)
+        #print(self.posX, " - ", self.posY)
         if self.posX - 10 <=self.xMinPos :
             self.send_direita_pos = False
         elif self.posX + 10 >=self.xMaxPos:

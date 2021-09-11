@@ -10,9 +10,9 @@ camera_index = 3 #Linux Camera
 camera_index = 0 ## Windows com a camera
 print_cameras_disponiveis = False
 
-video_encontrados_path = None#"/Dados/public/videos/"
+video_encontrados_path = "D:/public" #"/Dados/public/videos/"
 
-#yolo_path = "yolo/yolov4tiny"
+yolo_path = "yolo/yolov4tiny"
 yolo_path = "yolo/yolov4optimal"
 
 serial_port = '/dev/ttyUSB0' # Linux
@@ -27,7 +27,7 @@ allowed_classes = ['person',"cat",
 #"car;",
 "bird",
 "horse",
-"bicycle",
+#"bicycle",
 #"motorbike"
 ]
 
